@@ -29,8 +29,6 @@ class FaceEnhancement(object):
         # the mask for pasting restored faces back
         self.mask = np.zeros((1024,1024), np.float32)
         cv2.rectangle(self.mask, (0, 0), (1024, 1024), (1, 1, 1), -1, cv2.LINE_AA)
-        #self.mask = cv2.GaussianBlur(self.mask, (101, 101), 11)
-        #self.mask = cv2.GaussianBlur(self.mask, (101, 101), 11)
 
         self.kernel = np.array((
                 [0.0625, 0.125, 0.0625],
@@ -44,12 +42,11 @@ class FaceEnhancement(object):
         self.reference_5pts = get_reference_facial_points(
                 (self.size, self.size), inner_padding_factor, outer_padding, default_square)
 
-    #def mask_postprocess(self, mask, thres=20):
-        #mask[:thres, :] = 0; mask[-thres:, :] = 0
-        #mask[:, :thres] = 0; mask[:, -thres:] = 0
-        #mask = cv2.GaussianBlur(mask, (101, 101), 11)
-        #mask = cv2.GaussianBlur(mask, (101, 101), 11)
-        #return mask.astype(np.float32)
+    def mask_postprocess(self, mask, thres=20):
+        mask[:thres, :] = 0; mask[-thres:, :] = 0
+        mask[:, :thres] = 0; mask[:, -thres:] = 0
+        mask = cv2.GaussianBlur(mask, (101, 101), 11)
+        return mask.astype(np.float32)
 
     def process(self, img):
         if self.use_sr:
@@ -79,7 +76,7 @@ class FaceEnhancement(object):
             enhanced_faces.append(ef)
             
             tmp_mask = self.mask
-            #tmp_mask = self.mask_postprocess(self.faceparser.process(ef)[0]/255.)
+            tmp_mask = self.mask_postprocess(self.faceparser.process(ef)[0]/255.)
             tmp_mask = cv2.resize(tmp_mask, ef.shape[:2])
             tmp_mask = cv2.warpAffine(tmp_mask, tfm_inv, (width, height), flags=3)
 

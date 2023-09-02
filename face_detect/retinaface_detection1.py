@@ -72,7 +72,7 @@ class RetinaFaceDetection(object):
         img -= (104, 117, 123)
 
         num_rows, num_cols = img.shape[:2]   
-        translation_matrix = np.float32([ [1,0,-320], [0,1,-90] ])   
+        translation_matrix = np.float32([ [1,0,-290], [0,1,-90] ])   
         img_translation = cv2.warpAffine(img, translation_matrix, (num_cols, num_rows))
         img = img_translation
 
